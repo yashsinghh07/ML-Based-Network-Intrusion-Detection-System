@@ -1,0 +1,26 @@
+# Core ML and Data Processing
+pandas==2.3.3
+numpy==2.3.5
+scikit-learn==1.7.2
+scipy==1.16.3
+joblib==1.5.2
+
+# Deep Learning
+tensorflow==2.15.0
+keras==2.15.0
+
+# Network Packet Capture
+scapy==2.6.1
+
+# Web Dashboard
+streamlit>=1.39.0
+plotly>=5.24.0
+
+# Utilities
+python-dateutil==2.9.0.post0
+pytz==2025.2
+
+# Optional: For Flask version (if needed)
+# flask==3.1.2
+# flask-cors==6.0.1
+

@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  # NIDS Backend Service - Real-time packet capture and detection
+  nids-backend:
+    build: .
+    container_name: nids-backend
+    image: nids-backend:latest
+    command: python live_nids.py
+    network_mode: host  # Required for packet capture
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    volumes:
+      - ./logs:/app/logs
+      - ./alerts.log:/app/alerts.log
+      - ./nids_stats.txt:/app/nids_stats.txt
+      - ./nids_model.pkl:/app/nids_model.pkl
+      - ./le_proto.pkl:/app/le_proto.pkl
+    restart: unless-stopped
+    environment:
+      - PYTHONUNBUFFERED=1
+    depends_on:
+      - nids-dashboard
+
+  # NIDS Dashboard Service - Streamlit web interface
+  nids-dashboard:
+    build: .
+    container_name: nids-dashboard
+    image: nids-dashboard:latest
+    command: streamlit run dashboard.py --server.port=8501 --server.address=0.0.0.0
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./logs:/app/logs
+      - ./alerts.log:/app/alerts.log
+      - ./nids_stats.txt:/app/nids_stats.txt
+    restart: unless-stopped
+    environment:
+      - PYTHONUNBUFFERED=1
+
+volumes:
+  nids-logs:
+    driver: local
+
