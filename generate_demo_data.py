@@ -5,7 +5,7 @@ Generates sample data for testing the dashboard on Render
 """
 import random
 import time
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import os
 
 # File paths
@@ -19,7 +19,8 @@ SAMPLE_PORTS = [80, 443, 22, 53, 3389, 8080, 3000, 5000]
 
 def generate_alert():
     """Generate a random alert entry"""
-    timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    # Use UTC time to avoid timezone issues
+    timestamp = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')
     src_ip = random.choice(SAMPLE_IPS)
     dst_ip = random.choice(SAMPLE_IPS)
     src_port = random.choice(SAMPLE_PORTS)
@@ -43,13 +44,13 @@ def update_stats(total, normal, attacks):
         else:
             f.write(f"Normal Traffic: {normal} (0.00%)\n")
             f.write(f"Attacks Detected: {attacks} (0.00%)\n")
-        f.write(f"Last Updated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+        f.write(f"Last Updated: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')}\n")
 
 def initialize_files():
     """Initialize log and stats files"""
     if not os.path.exists(ALERTS_LOG):
         with open(ALERTS_LOG, 'w') as f:
-            f.write(f"=== NIDS Alert Log - Started {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} ===\n\n")
+            f.write(f"=== NIDS Alert Log - Started {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')} ===\n\n")
     
     if not os.path.exists(STATS_FILE):
         update_stats(0, 0, 0)
@@ -94,7 +95,8 @@ def run_demo_generator():
                 print(f"[INFO] Processed {packet_count} packets | Normal: {normal_count} | Attacks: {attack_count}")
             
             # Wait before next packet (simulate real-time processing)
-            time.sleep(random.uniform(0.5, 2.0))
+            # Generate alerts more frequently for real-time feel
+            time.sleep(random.uniform(0.3, 1.0))
             
     except KeyboardInterrupt:
         print("\n\n" + "="*60)
