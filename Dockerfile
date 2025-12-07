@@ -24,12 +24,15 @@ COPY live_nids.py .
 COPY dashboard.py .
 COPY train_deep_nids.py .
 
-# Copy model files (if they exist)
-COPY *.pkl . 2>/dev/null || true
-COPY *.h5 . 2>/dev/null || true
+# Copy model files - ensure these files exist in your repository
+# If model files don't exist, comment out the next 2 lines
+# Note: COPY with wildcards will fail if no files match
+# Make sure nids_model.pkl and le_proto.pkl are in your repo
+COPY nids_model.pkl .
+COPY le_proto.pkl .
 
-# Copy dataset (optional, for training)
-COPY KDDTrain+.txt . 2>/dev/null || true
+# Copy dataset (optional - comment out if not needed)
+# COPY KDDTrain+.txt .
 
 # Create directories for logs
 RUN mkdir -p /app/logs
@@ -40,4 +43,3 @@ EXPOSE 8501
 
 # Default command (can be overridden in docker-compose)
 CMD ["streamlit", "run", "dashboard.py", "--server.port=8501", "--server.address=0.0.0.0"]
-
